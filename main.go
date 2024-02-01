@@ -2,13 +2,13 @@ package main
 
 import (
 	"net/http"
+
+	"github.com/kevindoubleu/coding-problem-solver-service/handler"
 )
 
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/hi", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("hello"))
-	})
+	mux.Handle("/ping", handler.PingHandler())
 
 	http.ListenAndServe(":8080", mux)
 }
