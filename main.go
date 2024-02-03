@@ -3,13 +3,11 @@ package main
 import (
 	"net/http"
 
-	"github.com/gorilla/mux"
-	"github.com/kevindoubleu/coding-problem-solver-service/handler"
+	"github.com/kevindoubleu/coding-problem-solver-service/router"
 )
 
 func main() {
-	router := mux.NewRouter()
-	router.HandleFunc("/ping", handler.PingHandler).Methods("GET")
+	router := router.New()
 
 	http.Handle("/", router)
 	http.ListenAndServe(":8080", nil)
