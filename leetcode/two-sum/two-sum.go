@@ -1,13 +1,23 @@
 package twosum
 
 import (
-	"io/ioutil"
+	"encoding/json"
 	"log"
 	"net/http"
 )
 
+type Request struct {
+	Nums []int `json:"nums"`
+	Target int `json:"target"`
+}
+
+func (r Request) String() string {
+	marshalled, _ := json.Marshal(r)
+	return string(marshalled)
+}
+
 func Handler(w http.ResponseWriter, r *http.Request) {
-	body, _ := ioutil.ReadAll(r.Body)
-	log.Print(string(body))
-	w.Write(body)
+	req := r.Context().Value("data").(Request)
+	log.Print(req)
+	w.Write([]byte(req.String()))
 }
