@@ -21,7 +21,7 @@ func registerLeetcodeSubrouter(super *mux.Router) {
 	subrouter := super.PathPrefix("/leetcode").Subrouter()
 
 	twosumSubrouter := subrouter.PathPrefix("/two-sum").Subrouter()
-	twoSumMw := middleware.NewRequestBodyValidatorMiddleware[twosum.Request](true)
+	twoSumMw := middleware.NewRequestBodyValidatorMiddleware[twosum.Input](true)
 	twosumSubrouter.Use(twoSumMw.Middleware)
 	twosumSubrouter.HandleFunc("", twosum.Handler).Methods("POST")
 }
