@@ -1,9 +1,9 @@
 package twosum
 
 import (
-	"encoding/json"
-	"log"
 	"net/http"
+
+	"github.com/kevindoubleu/coding-problem-solver-service/router/middleware"
 )
 
 // https://leetcode.com/problems/two-sum/description/
@@ -26,11 +26,5 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		Answer: solve(input.Nums, input.Target),
 	}
 
-	responseBody, err := json.Marshal(response)
-	if err != nil {
-		log.Printf("fail to marshal response, err: %s", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	w.Write(responseBody)
+	middleware.SuccessResponse(response, w)
 }
