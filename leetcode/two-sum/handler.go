@@ -17,8 +17,8 @@ type Input struct {
 type Output struct {
 	Input Input `json:"input"`
 
-	Answer []int  `json:"answer"`
-	Error  string `json:"error"`
+	Answer []int  `json:"answer,omitempty"`
+	Error  string `json:"error,omitempty"`
 }
 
 var constraints = map[string]string{
@@ -30,26 +30,26 @@ var constraints = map[string]string{
 
 func Handler(w http.ResponseWriter, r *http.Request) {
 	input := r.Context().Value("data").(Input)
+	output := Output{
+		Input: input,
+	}
+
 	if err := preCheckConstraints(input.Nums, input.Target); err != nil {
-		resp := middleware.NewErrorResponse(err, http.StatusBadRequest)
-		middleware.WriteErrorResponse(resp, w)
-		return
+		output.Error = err.Error()
 	}
 
 	answer := solve(input.Nums, input.Target)
 
 	if err := postCheckConstraints(answer); err != nil {
-		resp := middleware.NewErrorResponse(err, http.StatusBadRequest)
-		middleware.WriteErrorResponse(resp, w)
+		output.Error = err.Error()
+	}
+
+	if output.isError() {
+		middleware.WriteErrorResponse(output.Error, w)
 		return
 	}
-
-	response := Output{
-		Input:  input,
-		Answer: answer,
-	}
-
-	middleware.WriteSuccessResponse(response, w)
+	output.Answer = answer
+	middleware.WriteSuccessResponse(output, w)
 }
 
 func preCheckConstraints(nums []int, target int) error {
@@ -78,4 +78,8 @@ func postCheckConstraints(answer []int) error {
 	}
 
 	return nil
+}
+
+func (o Output) isError() bool {
+	return len(o.Error) > 0
 }

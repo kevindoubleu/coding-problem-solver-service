@@ -7,22 +7,16 @@ import (
 )
 
 type ErrorResponse struct {
-	Error      string `json:"error"`
-	httpStatus int
+	Err string `json:"error"`
 }
 
-func NewErrorResponse(err error, httpStatus int) ErrorResponse {
-	return ErrorResponse{
-		Error:      err.Error(),
-		httpStatus: httpStatus,
-	}
-}
-
-func WriteErrorResponse(data ErrorResponse, w http.ResponseWriter) {
+func WriteErrorResponse(err string, w http.ResponseWriter) {
 	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(data.httpStatus)
+	w.WriteHeader(http.StatusBadRequest)
 
-	response, _ := json.Marshal(data)
+	response, _ := json.Marshal(ErrorResponse{
+		Err: err,
+	})
 	w.Write(response)
 }
 
